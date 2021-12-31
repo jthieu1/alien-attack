@@ -22,13 +22,12 @@ black_color = (0, 0, 0)
 
 def draw_bg():
     screen.fill(black_color)
-    pygame.display.flip()
 
 
 class Spaceship(pygame.sprite.Sprite):
-    def __int__(self, x, y, hp):
+    def __init__(self, x, y, hp):
         pygame.sprite.Sprite.__init__(self)
-        # self.image = pygame.image.load("") This is for spaceship sprite
+        self.image = pygame.image.load("images/spaceship.png")
         self.rect = self.image.get_rect()
         self.rect.center = [x, y]
         self.hp_start = hp
@@ -48,7 +47,7 @@ class Spaceship(pygame.sprite.Sprite):
         pygame.draw.rect(screen, (255, 0, 0), (self.rect.x, (self.rect.bottom + 10), self.rect.width, 15))
         if self.hp_left > 0:
             pygame.draw.rect(screen, (0, 255, 0), (self.rect.x, (self.rect.bottom + 10),
-                                                   int(self.rect.width * (self.health_remaining / self.health_start)),
+                                                   int(self.rect.width * (self.hp_left / self.hp_start)),
                                                    15))
 
 
