@@ -19,6 +19,8 @@ pygame.display.set_caption('Alien Attack')
 
 rows = 5
 columns = 5
+alien_cooldown = 1000  # cooldown of aliens shooting
+last_alien_shot = pygame.time.get_ticks()
 
 # background
 black_color = (0, 0, 0)
@@ -99,10 +101,24 @@ class Aliens(pygame.sprite.Sprite):
             self.move_counter *= self.move_direction
 
 
+class AlienBullets(pygame.sprite.Sprite):
+    def __init__(self, x, y):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.image.load("images/alien_bullet.png")
+        self.rect = self.image.get_rect()
+        self.rect.center = [x, y]
+
+    def update(self):
+        self.rect.y += 2
+        if self.rect.top > screen_height:
+            self.kill()
+
+
 # create sprite groups
 spaceship_group = pygame.sprite.Group()
 bullet_group = pygame.sprite.Group()
 aliens_group = pygame.sprite.Group()
+alien_bullets_group = pygame.sprite.Group()
 
 
 def spawn_aliens():
@@ -123,6 +139,14 @@ while run:
     clock.tick(fps)
     draw_bg()
 
+    time_now = pygame.time.get_ticks()
+    # alien shooting
+    if time_now - last_alien_shot > alien_cooldown and len(alien_bullets_group) < 5 and len(aliens_group) > 0:
+        attacking_alien = random.choice(aliens_group.sprites())
+        alien_bullet = AlienBullets(attacking_alien.rect.centerx, attacking_alien.rect.bottom)
+        alien_bullets_group.add(alien_bullet)
+        last_alien_shot = time_now
+
     # print(spaceship.rect.x)
 
     for event in pygame.event.get():
@@ -135,11 +159,13 @@ while run:
 
     # updating sprite groups (Spaceship not updated as group)
     bullet_group.update()
+    alien_bullets_group.update()
 
     # update sprite groups
     spaceship_group.draw(screen)
     bullet_group.draw(screen)
     aliens_group.draw(screen)
+    alien_bullets_group.draw(screen)
 
     pygame.display.update()
 
