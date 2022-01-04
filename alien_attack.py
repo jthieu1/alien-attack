@@ -3,6 +3,7 @@
 import random
 
 import pygame
+import pygame.sprite
 import pygame.time
 from pygame.locals import *
 
@@ -43,7 +44,7 @@ class Spaceship(pygame.sprite.Sprite):
         self.last_shot = pygame.time.get_ticks()
 
     def update(self):
-        speed = 8       # Sets the movement speed
+        speed = 8  # Sets the movement speed
         cooldown = 500  # Sets the cooldown variable between each bullet that can be fired, in milliseconds
 
         key = pygame.key.get_pressed()
@@ -61,6 +62,9 @@ class Spaceship(pygame.sprite.Sprite):
             bullet = Bullets(self.rect.centerx, self.rect.top)
             bullet_group.add(bullet)
             self.last_shot = curr_time
+
+        # updates the mask, so this ignores the transparent part of the spaceship
+        self.mask = pygame.mask.from_surface(self.image)
 
         # draws health bar
         pygame.draw.rect(screen, red_color, (self.rect.x, (self.rect.bottom + 10), self.rect.width, 15))
@@ -81,6 +85,9 @@ class Bullets(pygame.sprite.Sprite):
         self.rect.y -= 5
         # if bottom of the bullet has gone off the screen
         if self.rect.bottom < 0:
+            self.kill()
+
+        if pygame.sprite.spritecollide(self, aliens_group, True):
             self.kill()
 
 
@@ -112,6 +119,11 @@ class AlienBullets(pygame.sprite.Sprite):
         self.rect.y += 2
         if self.rect.top > screen_height:
             self.kill()
+        if pygame.sprite.spritecollide(self, spaceship_group, False, pygame.sprite.collide_mask):
+            # Fourth parameter ensures proper collision with spaceship
+            self.kill()
+            # This will reduce spaceship's health
+            spaceship.hp_left -= 1
 
 
 # create sprite groups
