@@ -28,8 +28,10 @@ screen = pygame.display.set_mode((screen_width, screen_height))
 pygame.display.set_caption('Alien Attack')
 
 # fonts
-font_35 = pygame.font.SysFont('Consolas', 30)
+font_35 = pygame.font.SysFont('Consolas', 35)
+font_38 = pygame.font.SysFont('Consolas', 38)
 font_40 = pygame.font.SysFont('Consolas', 40)
+
 
 # load sounds
 expl_fx = pygame.mixer.Sound("sound/explosion.wav")
@@ -227,11 +229,18 @@ spawn_aliens()
 # create the player
 spaceship = Spaceship(int(screen_width / 2), screen_height - 100, 3)
 spaceship_group.add(spaceship)
-
 run = True
 while run:
     clock.tick(fps)
     draw_bg()
+
+    if countdown > 0:
+        draw_text('GAME START:', font_40, white_color, int(screen_width / 2 - 160), int(screen_height / 2 - 275))
+        draw_text(str(countdown), font_35, white_color, int(screen_width / 2 + 110), int(screen_height / 2 - 271))
+        cd_timer = pygame.time.get_ticks()
+        if cd_timer - last_count > 1000:
+            countdown -= 1
+            last_count = cd_timer
 
     if countdown == 0:
         time_now = pygame.time.get_ticks()
@@ -260,14 +269,6 @@ while run:
                 draw_text('GAME OVER!', font_40, white_color, int(screen_width / 2 - 100), int(screen_height / 2 + 50))
             if game_over == 1:
                 draw_text('YOU WIN!', font_40, white_color, int(screen_width / 2 - 100), int(screen_height / 2 + 50))
-
-    if countdown > 0:
-        draw_text('GAME START', font_40, white_color, int(screen_width / 2 - 110), int(screen_height / 2 + 50))
-        draw_text(str(countdown), font_35, white_color, int(screen_width / 2 - 10), int(screen_height / 2 + 100))
-        cd_timer = pygame.time.get_ticks()
-        if cd_timer - last_count > 1000:
-            countdown -= 1
-            last_count = cd_timer
 
     explosion_group.update()
 
