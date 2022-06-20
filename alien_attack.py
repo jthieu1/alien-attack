@@ -8,8 +8,11 @@ import pygame.time
 from pygame.locals import *
 from pygame import mixer
 
-pygame.mixer.pre_init(44100, -16, 2, 512)   # need this so the sounds aren't delayed
+pygame.mixer.pre_init(44100, -16, 2, 512)
 mixer.init()
+
+pygame.mixer.music.play(-1, 0.0, 0)  # music starts immediately at third 0
+music = pygame.mixer.Sound('sound/bgm.wav')
 
 # FPS
 clock = pygame.time.Clock()
@@ -31,9 +34,6 @@ expl2_fx.set_volume(0.10)
 
 bullet_fx = pygame.mixer.Sound("sound/bullet.wav")
 bullet_fx.set_volume(0.30)
-
-#pygame.mixer.music.play(-1, 0.0, 0)  # music starts immediately at third 0
-#music = pygame.mixer.Sound('sound/bgm.wav')
 
 
 rows = 5
