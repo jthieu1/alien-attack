@@ -6,6 +6,10 @@ import pygame
 import pygame.sprite
 import pygame.time
 from pygame.locals import *
+from pygame import mixer
+
+pygame.mixer.pre_init(44100, -16, 2, 512)   # need this so the sounds aren't delayed
+mixer.init()
 
 # FPS
 clock = pygame.time.Clock()
@@ -17,6 +21,20 @@ screen_height = 600
 
 screen = pygame.display.set_mode((screen_width, screen_height))
 pygame.display.set_caption('Alien Attack')
+
+# load sounds
+expl_fx = pygame.mixer.Sound("sound/explosion.wav")
+expl_fx.set_volume(0.30)
+
+expl2_fx = pygame.mixer.Sound("sound/explosion.wav")
+expl2_fx.set_volume(0.10)
+
+bullet_fx = pygame.mixer.Sound("sound/bullet.wav")
+bullet_fx.set_volume(0.30)
+
+#pygame.mixer.music.play(-1, 0.0, 0)  # music starts immediately at third 0
+#music = pygame.mixer.Sound('sound/bgm.wav')
+
 
 rows = 5
 columns = 5
@@ -59,6 +77,7 @@ class Spaceship(pygame.sprite.Sprite):
 
         # checks for shooting, creates bullet everytime space is pressed
         if key[pygame.K_SPACE] and curr_time - self.last_shot > cooldown:
+            bullet_fx.play()
             bullet = Bullets(self.rect.centerx, self.rect.top)
             bullet_group.add(bullet)
             self.last_shot = curr_time
@@ -93,6 +112,7 @@ class Bullets(pygame.sprite.Sprite):
 
         if pygame.sprite.spritecollide(self, aliens_group, True):
             self.kill()
+            expl_fx.play()
             explosion = Explosion(self.rect.centerx, self.rect.centery, 2)  # for mid-sized explosions
             explosion_group.add(explosion)
 
@@ -128,6 +148,7 @@ class AlienBullets(pygame.sprite.Sprite):
         if pygame.sprite.spritecollide(self, spaceship_group, False, pygame.sprite.collide_mask):
             # Fourth parameter ensures proper collision with spaceship
             self.kill()
+            expl2_fx.play()
             # This will reduce spaceship's health
             spaceship.hp_left -= 1
             explosion = Explosion(self.rect.centerx, self.rect.centery, 1)  # for tiny-sized explosions
