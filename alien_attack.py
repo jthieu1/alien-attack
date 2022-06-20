@@ -11,8 +11,9 @@ from pygame import mixer
 pygame.mixer.pre_init(44100, -16, 2, 512)
 mixer.init()
 
-pygame.mixer.music.play(-1, 0.0, 0)  # music starts immediately at third 0
 music = pygame.mixer.Sound('sound/bgm.wav')
+music.set_volume(0.5)
+music.play(-1, 0, 0)
 
 # FPS
 clock = pygame.time.Clock()
